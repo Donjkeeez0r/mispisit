@@ -1,0 +1,22 @@
+{{> header}}
+<h1>Отклонённые события</h1>
+{{#if last}}
+<div class="card error">
+  <h2>Событие не принято</h2>
+  <p><b>Сотрудник:</b> {{last.employeeName}}</p>
+  <p><b>Событие:</b> {{last.typeLabel}}, ID в CRM: {{last.crmId}}</p>
+  <p><b>Причина:</b> {{last.reason}}</p>
+  <p class="hint">{{last.date}}</p>
+</div>
+{{/if}}
+{{#if rest.length}}
+<h2>Ранее отклонённые</h2>
+<table>
+  <tr><th>Дата</th><th>Сотрудник</th><th>Событие</th><th>ID в CRM</th><th>Причина</th></tr>
+  {{#each rest}}
+  <tr><td>{{date}}</td><td>{{employeeName}}</td><td>{{typeLabel}}</td><td>{{crmId}}</td><td>{{reason}}</td></tr>
+  {{/each}}
+</table>
+{{/if}}
+<p><a href="/events/new">← Вернуться к форме</a></p>
+{{> footer}}

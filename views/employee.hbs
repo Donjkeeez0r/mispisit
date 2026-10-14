@@ -1,0 +1,18 @@
+{{> header}}
+<h1>{{employee.name}}</h1>
+<div class="card">
+  <p><b>Уровень {{employee.level}}</b> · {{employee.xp}} XP · до следующего уровня {{employee.toNext}} XP</p>
+  <div class="bar"><div style="width: {{employee.progress}}%"></div></div>
+  <p><a href="/events/new?employeeId={{employee.id}}">Начислить опыт этому сотруднику</a></p>
+</div>
+<h2>История начислений</h2>
+<table>
+  <tr><th>Дата</th><th>Событие</th><th>ID в CRM</th><th>Опыт</th></tr>
+  {{#each employee.history}}
+  <tr><td>{{date}}</td><td>{{label}}</td><td>{{crmId}}</td><td>+{{xp}}</td></tr>
+  {{else}}
+  <tr><td colspan="4">Начислений пока нет</td></tr>
+  {{/each}}
+</table>
+<p><a href="/leaderboard">← К рейтингу</a></p>
+{{> footer}}

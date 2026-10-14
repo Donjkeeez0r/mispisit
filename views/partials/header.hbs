@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{title}} — SalesDrive</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: #f4f6f8; color: #1f2933; }
+    header { background: #1e3a5f; color: #fff; padding: 14px 32px; display: flex; align-items: center; gap: 32px; flex-wrap: wrap; }
+    header .logo { color: #fff; font-size: 22px; font-weight: 700; text-decoration: none; }
+    nav { display: flex; gap: 20px; flex-wrap: wrap; }
+    nav a { color: #cfe0f5; text-decoration: none; }
+    nav a:hover { color: #fff; text-decoration: underline; }
+    main { max-width: 960px; margin: 32px auto; padding: 0 24px; }
+    h1 { margin-top: 0; }
+    .card { background: #fff; border-radius: 8px; padding: 20px 24px; box-shadow: 0 1px 3px rgba(0,0,0,.08); margin-bottom: 20px; }
+    table { width: 100%; border-collapse: collapse; background: #fff; }
+    th, td { padding: 10px 12px; border-bottom: 1px solid #e4e7eb; text-align: left; }
+    th { background: #eef2f7; }
+    a { color: #1e5fa8; }
+    .actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .actions a { display: block; background: #fff; border-radius: 8px; padding: 18px; text-decoration: none; color: inherit; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+    .actions a:hover { box-shadow: 0 2px 8px rgba(0,0,0,.15); }
+    .actions b { display: block; color: #1e5fa8; margin-bottom: 6px; }
+    .bar { background: #e4e7eb; border-radius: 6px; height: 14px; overflow: hidden; }
+    .bar div { background: #2f9e44; height: 100%; }
+    label { display: block; font-weight: 600; margin: 14px 0 6px; }
+    select, input { width: 100%; max-width: 400px; padding: 8px; font-size: 15px; border: 1px solid #c3cad3; border-radius: 6px; }
+    button { margin-top: 20px; padding: 10px 20px; font-size: 15px; background: #1e5fa8; color: #fff; border: 0; border-radius: 6px; cursor: pointer; }
+    .error { border-left: 6px solid #c92a2a; }
+    .error h2 { color: #c92a2a; margin-top: 0; }
+    .hint { color: #52606d; font-size: 14px; }
+    footer { text-align: center; color: #7b8794; font-size: 13px; padding: 24px; }
+  </style>
+</head>
+<body>
+<header>
+  <a class="logo" href="/">SalesDrive</a>
+  <nav>
+    <a href="/">Главная</a>
+    <a href="/leaderboard">Рейтинг</a>
+    <a href="/events/new">Начислить опыт</a>
+    <a href="/events/rejected">Отклонённые события</a>
+  </nav>
+</header>
+<main>
