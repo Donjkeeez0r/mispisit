@@ -10,6 +10,8 @@ COPY tsconfig.json ./
 
 COPY src ./src
 
+COPY views ./views
+
 RUN npm run build
 
 EXPOSE 8080

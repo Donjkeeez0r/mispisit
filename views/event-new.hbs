@@ -1,0 +1,28 @@
+{{> header}}
+<h1>Начислить опыт за событие</h1>
+<div class="card">
+  <p class="hint">Форма имитирует событие, которое приходит из Bitrix24: руководитель отдела продаж указывает сотрудника, тип события и его ID в CRM. Одно и то же событие дважды не учитывается.</p>
+  <form method="post" action="/events">
+    <label for="employeeId">Сотрудник</label>
+    <select id="employeeId" name="employeeId">
+      <option value="">— выберите сотрудника —</option>
+      {{#each employees}}
+      <option value="{{id}}" {{#if selected}}selected{{/if}}>{{name}}</option>
+      {{/each}}
+    </select>
+
+    <label for="type">Тип события</label>
+    <select id="type" name="type">
+      {{#each types}}
+      <option value="{{value}}">{{label}} (+{{xp}} XP)</option>
+      {{/each}}
+    </select>
+
+    <label for="crmId">ID события в CRM</label>
+    <input id="crmId" name="crmId" placeholder="например, DEAL-1005">
+
+    <button type="submit">Начислить</button>
+  </form>
+  <p class="hint">Чтобы увидеть отказ, укажите уже учтённый ID (например, DEAL-1001) или оставьте поля пустыми.</p>
+</div>
+{{> footer}}

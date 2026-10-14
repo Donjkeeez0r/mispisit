@@ -1,0 +1,14 @@
+{{> header}}
+<h1>Рейтинг отдела продаж</h1>
+<table>
+  <tr><th>Место</th><th>Сотрудник</th><th>Уровень</th><th>Опыт (XP)</th></tr>
+  {{#each rows}}
+  <tr>
+    <td>{{place}}</td>
+    <td><a href="/employees/{{id}}">{{name}}</a></td>
+    <td>{{level}}</td>
+    <td>{{xp}}</td>
+  </tr>
+  {{/each}}
+</table>
+{{> footer}}
