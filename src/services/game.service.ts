@@ -1,108 +1,126 @@
 import { Injectable } from '@nestjs/common';
-import {
-  EMPLOYEES, EVENTS, EVENT_TYPES, REJECTIONS, XP_PER_LEVEL,
-  Employee, EventType, Rejection, XpEvent,
-} from '../data/demo-data';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { EVENT_TYPES, EventType, XP_PER_LEVEL } from '../data/game-rules';
+import { Employee } from '../entities/employee.entity';
+import { Rejection } from '../entities/rejection.entity';
+import { XpEvent } from '../entities/xp-event.entity';
 
 export interface EventInput {
-  employeeId?: string;
+  employeeName?: string;
   type?: string;
   crmId?: string;
 }
 
 export type EventResult = { ok: true; employeeId: number } | { ok: false };
 
+// Игровая логика: подсчёт опыта и уровней, приём событий, журнал отказов.
 @Injectable()
 export class GameService {
-  private readonly employees: Employee[] = [...EMPLOYEES];
-  private readonly events: XpEvent[] = [...EVENTS];
-  private readonly rejections: Rejection[] = [...REJECTIONS];
+  constructor(
+    @InjectRepository(Employee) private readonly employees: Repository<Employee>,
+    @InjectRepository(XpEvent) private readonly events: Repository<XpEvent>,
+    @InjectRepository(Rejection) private readonly rejections: Repository<Rejection>,
+  ) {}
 
   getEmployees() {
-    return this.employees;
+    return this.employees.find({ order: { name: 'ASC' } });
   }
 
   getEventTypes() {
     return Object.entries(EVENT_TYPES).map(([value, t]) => ({ value, label: t.label, xp: t.xp }));
   }
 
-  getLeaderboard() {
-    return this.employees
-      .map((e) => ({ ...e, ...this.calcStats(e.id) }))
+  // Рейтинг: сотрудники по убыванию опыта
+  async getLeaderboard() {
+    const employees = await this.employees.find({ relations: { events: true } });
+    return employees
+      .map((e) => ({ id: e.id, name: e.name, ...calcStats(e.events) }))
       .sort((a, b) => b.xp - a.xp)
       .map((row, i) => ({ ...row, place: i + 1 }));
   }
 
-  getEmployeeCard(id: number) {
-    const employee = this.employees.find((e) => e.id === id);
+  // Карточка сотрудника: уровень, прогресс и история начислений
+  async getEmployeeCard(id: number) {
+    const employee = await this.employees.findOne({ where: { id }, relations: { events: true } });
     if (!employee) return null;
 
-    const history = this.events
-      .filter((ev) => ev.employeeId === id)
+    const history = [...employee.events]
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
       .map((ev) => ({
         date: formatDate(ev.createdAt),
-        label: EVENT_TYPES[ev.type].label,
+        label: EVENT_TYPES[ev.type]?.label ?? ev.type,
         crmId: ev.crmId,
-        xp: EVENT_TYPES[ev.type].xp,
+        xp: ev.xp,
       }));
 
-    return { ...employee, ...this.calcStats(id), history };
+    return { id: employee.id, name: employee.name, ...calcStats(employee.events), history };
   }
 
-  registerEvent(input: EventInput): EventResult {
-    const employee = this.employees.find((e) => e.id === Number(input.employeeId));
+  // Приём события из CRM: либо начисляем опыт, либо пишем отказ в журнал
+  async registerEvent(input: EventInput): Promise<EventResult> {
+    const name = (input.employeeName ?? '').trim();
     const type = input.type as EventType;
     const typeInfo = EVENT_TYPES[type];
     const crmId = (input.crmId ?? '').trim().toUpperCase();
 
     let reason: string | null = null;
-    if (!employee) {
-      reason = 'Не выбран сотрудник или такого сотрудника нет в системе.';
+    if (!name) {
+      reason = 'Не указан сотрудник.';
+    } else if (name.length > 100) {
+      reason = 'Имя сотрудника длиннее 100 символов.';
     } else if (!typeInfo) {
       reason = 'Неизвестный тип события. Допустимы: звонок, новый лид, закрытая сделка.';
     } else if (!crmId) {
       reason = 'Не указан ID события в CRM. Без него нельзя проверить, что событие не учтено повторно.';
+    } else if (crmId.length > 50) {
+      reason = 'ID события в CRM длиннее 50 символов.';
     } else {
-      const duplicate = this.events.find((ev) => ev.crmId === crmId);
+      const duplicate = await this.events.findOne({ where: { crmId }, relations: { employee: true } });
       if (duplicate) {
-        const owner = this.employees.find((e) => e.id === duplicate.employeeId)?.name ?? '—';
-        reason = `Событие ${crmId} уже учтено ${formatDate(duplicate.createdAt)} (${owner}). Повторное начисление опыта запрещено.`;
+        reason = `Событие ${crmId} уже учтено ${formatDate(duplicate.createdAt)} (${duplicate.employee.name}). Повторное начисление опыта запрещено.`;
       }
     }
 
     if (reason) {
-      this.rejections.push({
-        employeeName: employee?.name ?? 'не указан',
-        typeLabel: typeInfo?.label ?? (input.type || 'не указан'),
-        crmId: crmId || 'не указан',
-        reason,
-        createdAt: new Date(),
-      });
+      await this.rejections.save(
+        this.rejections.create({
+          employeeName: (name || 'не указан').slice(0, 100),
+          typeLabel: typeInfo?.label ?? (input.type || 'не указан').slice(0, 50),
+          crmId: (crmId || 'не указан').slice(0, 50),
+          reason,
+        }),
+      );
       return { ok: false };
     }
 
-    this.events.push({ employeeId: employee!.id, type, crmId, createdAt: new Date() });
-    return { ok: true, employeeId: employee!.id };
+    // Сотрудник создаётся при первом событии, дальше находится по имени
+    let employee = await this.employees.findOneBy({ name });
+    if (!employee) {
+      employee = await this.employees.save(this.employees.create({ name }));
+    }
+
+    await this.events.save(this.events.create({ employee, type, crmId, xp: typeInfo.xp }));
+    return { ok: true, employeeId: employee.id };
   }
 
-  getRejections() {
-    return [...this.rejections]
-      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-      .map((r) => ({ ...r, date: formatDate(r.createdAt) }));
-  }
-
-  private calcStats(employeeId: number) {
-    const xp = this.events
-      .filter((ev) => ev.employeeId === employeeId)
-      .reduce((sum, ev) => sum + EVENT_TYPES[ev.type].xp, 0);
-    const level = Math.floor(xp / XP_PER_LEVEL) + 1;
-    const progress = xp % XP_PER_LEVEL;
-    return { xp, level, progress, toNext: XP_PER_LEVEL - progress };
+  // Журнал отказов
+  async getRejections() {
+    const rows = await this.rejections.find({ order: { createdAt: 'DESC' } });
+    return rows.map((r) => ({ ...r, date: formatDate(r.createdAt) }));
   }
 }
 
+function calcStats(events: XpEvent[]) {
+  const xp = events.reduce((sum, ev) => sum + ev.xp, 0);
+  const level = Math.floor(xp / XP_PER_LEVEL) + 1;
+  const progress = xp % XP_PER_LEVEL;
+  return { xp, level, progress, toNext: XP_PER_LEVEL - progress };
+}
+
 function formatDate(d: Date): string {
-  const p = (n: number) => String(n).padStart(2, '0');
-  return `${p(d.getDate())}.${p(d.getMonth() + 1)}.${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}`;
+  return d.toLocaleString('ru-RU', {
+    timeZone: 'Europe/Ulyanovsk',
+    day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit',
+  });
 }

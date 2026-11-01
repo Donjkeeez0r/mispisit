@@ -8,6 +8,8 @@
   <p><b>Причина:</b> {{last.reason}}</p>
   <p class="hint">{{last.date}}</p>
 </div>
+{{else}}
+<div class="card"><p>Отклонённых событий пока нет.</p></div>
 {{/if}}
 {{#if rest.length}}
 <h2>Ранее отклонённые</h2>

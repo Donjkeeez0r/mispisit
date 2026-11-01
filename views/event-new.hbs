@@ -3,12 +3,13 @@
 <div class="card">
   <p class="hint">Форма имитирует событие, которое приходит из Bitrix24: руководитель отдела продаж указывает сотрудника, тип события и его ID в CRM. Одно и то же событие дважды не учитывается.</p>
   <form method="post" action="/events">
-    <label for="employeeId">Сотрудник</label>
-    <select id="employeeId" name="employeeId">
-      <option value="">— выберите сотрудника —</option>
+    <label for="employeeName">Сотрудник</label>
+    <input id="employeeName" name="employeeName" list="employees" value="{{employeeName}}" placeholder="например, Анна Смирнова">
+    <datalist id="employees">
       {{#each employees}}
-      <option value="{{id}}" {{#if selected}}selected{{/if}}>{{name}}</option>
+      <option value="{{name}}"></option>
       {{/each}}
+    </datalist>
     </select>
 
     <label for="type">Тип события</label>
@@ -23,6 +24,6 @@
 
     <button type="submit">Начислить</button>
   </form>
-  <p class="hint">Чтобы увидеть отказ, укажите уже учтённый ID (например, DEAL-1001) или оставьте поля пустыми.</p>
+    <p class="hint">Чтобы увидеть отказ, повторите уже начисленный ID события или оставьте поля пустыми.</p>
 </div>
 {{> footer}}
