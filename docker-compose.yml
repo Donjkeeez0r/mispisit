@@ -2,7 +2,7 @@ name: mispisit-antipov
 
 services:
   app:
-    image: donjkeeez0r/mispisit-lab1:0.0.3
+    image: donjkeeez0r/mispisit-lab1:0.0.4
     ports:
       - "8080:8080"
     environment:

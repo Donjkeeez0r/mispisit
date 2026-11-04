@@ -14,6 +14,12 @@ async function bootstrap() {
   app.setViewEngine('hbs');
   hbs.registerPartials(join(viewsDir, 'partials'));
 
+    hbs.registerHelper('eq', (a: unknown, b: unknown) => a === b);
+
+  app.useStaticAssets(join(__dirname, '..', 'node_modules', 'bootstrap', 'dist'), {
+    prefix: '/static/bootstrap/',
+  });
+
   await app.listen(Number(process.env.PORT) || 8080, '0.0.0.0');
 }
 bootstrap();

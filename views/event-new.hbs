@@ -1,29 +1,39 @@
 {{> header}}
-<h1>Начислить опыт за событие</h1>
-<div class="card">
-  <p class="hint">Форма имитирует событие, которое приходит из Bitrix24: руководитель отдела продаж указывает сотрудника, тип события и его ID в CRM. Одно и то же событие дважды не учитывается.</p>
-  <form method="post" action="/events">
-    <label for="employeeName">Сотрудник</label>
-    <input id="employeeName" name="employeeName" list="employees" value="{{employeeName}}" placeholder="например, Анна Смирнова">
-    <datalist id="employees">
-      {{#each employees}}
-      <option value="{{name}}"></option>
-      {{/each}}
-    </datalist>
-    </select>
-
-    <label for="type">Тип события</label>
-    <select id="type" name="type">
-      {{#each types}}
-      <option value="{{value}}">{{label}} (+{{xp}} XP)</option>
-      {{/each}}
-    </select>
-
-    <label for="crmId">ID события в CRM</label>
-    <input id="crmId" name="crmId" placeholder="например, DEAL-1005">
-
-    <button type="submit">Начислить</button>
-  </form>
-    <p class="hint">Чтобы увидеть отказ, повторите уже начисленный ID события или оставьте поля пустыми.</p>
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <h1 class="h3 mb-3">Начислить опыт за событие</h1>
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <p class="text-muted">Форма имитирует событие, которое приходит из Bitrix24: руководитель отдела продаж указывает сотрудника, тип события и его ID в CRM. Новый сотрудник появится в рейтинге после первого начисления. Одно и то же событие дважды не учитывается.</p>
+        <form method="post" action="/events">
+          <div class="mb-3">
+            <label for="employeeName" class="form-label">Сотрудник</label>
+            <input id="employeeName" name="employeeName" class="form-control" list="employees" value="{{employeeName}}" placeholder="например, Анна Смирнова">
+            <datalist id="employees">
+              {{#each employees}}
+              <option value="{{name}}"></option>
+              {{/each}}
+            </datalist>
+          </div>
+          <div class="mb-3">
+            <label for="type" class="form-label">Тип события</label>
+            <select id="type" name="type" class="form-select">
+              {{#each types}}
+              <option value="{{value}}">{{label}} (+{{xp}} XP)</option>
+              {{/each}}
+            </select>
+          </div>
+          <div class="mb-4">
+            <label for="crmId" class="form-label">ID события в CRM</label>
+            <input id="crmId" name="crmId" class="form-control" placeholder="например, DEAL-1005">
+            <div class="form-text">Уникальный номер звонка, лида или сделки в Bitrix24.</div>
+          </div>
+          <button type="submit" class="btn btn-primary">Начислить</button>
+          <a href="/leaderboard" class="btn btn-link">Отмена</a>
+        </form>
+      </div>
+    </div>
+    <p class="text-muted small mt-3">Чтобы увидеть отказ, повторите уже начисленный ID события или оставьте поля пустыми.</p>
+  </div>
 </div>
 {{> footer}}

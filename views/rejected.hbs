@@ -1,24 +1,38 @@
 {{> header}}
-<h1>Отклонённые события</h1>
+<h1 class="h3 mb-3">Отклонённые события</h1>
 {{#if last}}
-<div class="card error">
-  <h2>Событие не принято</h2>
-  <p><b>Сотрудник:</b> {{last.employeeName}}</p>
-  <p><b>Событие:</b> {{last.typeLabel}}, ID в CRM: {{last.crmId}}</p>
-  <p><b>Причина:</b> {{last.reason}}</p>
-  <p class="hint">{{last.date}}</p>
+<div class="alert alert-danger shadow-sm" role="alert">
+  <h2 class="h5 alert-heading">Событие не принято</h2>
+  <p class="mb-1"><b>Сотрудник:</b> {{last.employeeName}}</p>
+  <p class="mb-1"><b>Событие:</b> {{last.typeLabel}}, ID в CRM: <code>{{last.crmId}}</code></p>
+  <p class="mb-2"><b>Причина:</b> {{last.reason}}</p>
+  <hr>
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <small>{{last.date}}</small>
+    <a href="/events/new" class="btn btn-sm btn-outline-danger">Вернуться к форме</a>
+  </div>
 </div>
 {{else}}
-<div class="card"><p>Отклонённых событий пока нет.</p></div>
+<div class="card shadow-sm">
+  <div class="empty-state">
+    <h2 class="h5">Отклонённых событий пока нет</h2>
+    <p class="mb-0">Здесь появятся события, которые система не приняла: повторные или с незаполненными полями.</p>
+  </div>
+</div>
 {{/if}}
 {{#if rest.length}}
-<h2>Ранее отклонённые</h2>
-<table>
-  <tr><th>Дата</th><th>Сотрудник</th><th>Событие</th><th>ID в CRM</th><th>Причина</th></tr>
-  {{#each rest}}
-  <tr><td>{{date}}</td><td>{{employeeName}}</td><td>{{typeLabel}}</td><td>{{crmId}}</td><td>{{reason}}</td></tr>
-  {{/each}}
-</table>
+<div class="card shadow-sm mt-4">
+  <div class="card-header bg-white"><h2 class="h5 mb-0">Ранее отклонённые</h2></div>
+  <div class="table-responsive">
+    <table class="table align-middle mb-0">
+      <thead class="table-light"><tr><th>Дата</th><th>Сотрудник</th><th>Событие</th><th>ID в CRM</th><th>Причина</th></tr></thead>
+      <tbody>
+        {{#each rest}}
+        <tr><td class="text-nowrap">{{date}}</td><td>{{employeeName}}</td><td>{{typeLabel}}</td><td><code>{{crmId}}</code></td><td>{{reason}}</td></tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+</div>
 {{/if}}
-<p><a href="/events/new">← Вернуться к форме</a></p>
 {{> footer}}

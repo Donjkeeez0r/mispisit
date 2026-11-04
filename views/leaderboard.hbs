@@ -1,16 +1,33 @@
 {{> header}}
-<h1>Рейтинг отдела продаж</h1>
-<table>
-  <tr><th>Место</th><th>Сотрудник</th><th>Уровень</th><th>Опыт (XP)</th></tr>
-  {{#each rows}}
-  <tr>
-    <td>{{place}}</td>
-    <td><a href="/employees/{{id}}">{{name}}</a></td>
-    <td>{{level}}</td>
-    <td>{{xp}}</td>
-  </tr>
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+  <h1 class="h3 mb-0">Рейтинг отдела продаж</h1>
+  <a href="/events/new" class="btn btn-primary">Начислить опыт</a>
+</div>
+<div class="card shadow-sm">
+  {{#if rows.length}}
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr><th style="width: 80px">Место</th><th>Сотрудник</th><th>Уровень</th><th class="text-end">Опыт (XP)</th></tr>
+      </thead>
+      <tbody>
+        {{#each rows}}
+        <tr>
+          <td><span class="badge rounded-pill {{#if (eq place 1)}}text-bg-warning{{else}}text-bg-secondary{{/if}}">{{place}}</span></td>
+          <td><a href="/employees/{{id}}" class="fw-semibold text-decoration-none">{{name}}</a></td>
+          <td><span class="badge text-bg-primary">Уровень {{level}}</span></td>
+          <td class="text-end fw-semibold">{{xp}}</td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
   {{else}}
-  <tr><td colspan="4">Пока никого нет. Сотрудник появится в рейтинге после первого начисления опыта.</td></tr>
-  {{/each}}
-</table>
+  <div class="empty-state">
+    <h2 class="h5">В рейтинге пока никого нет</h2>
+    <p class="mb-4">Сотрудник появится здесь после первого начисления опыта за событие из CRM.</p>
+    <a href="/events/new" class="btn btn-primary">Начислить первый опыт</a>
+  </div>
+  {{/if}}
+</div>
 {{> footer}}
