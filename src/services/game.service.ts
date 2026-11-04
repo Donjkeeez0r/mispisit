@@ -23,6 +23,15 @@ export class GameService {
     @InjectRepository(Rejection) private readonly rejections: Repository<Rejection>,
   ) {}
 
+  async getSummary() {
+    const [employees, events, rejections] = await Promise.all([
+      this.employees.count(),
+      this.events.count(),
+      this.rejections.count(),
+    ]);
+    return { employees, events, rejections };
+  }
+
   getEmployees() {
     return this.employees.find({ order: { name: 'ASC' } });
   }

@@ -14,6 +14,7 @@ export class EventsController {
     const selected = employees.find((e) => String(e.id) === employeeId);
     return {
       title: 'Начислить опыт',
+      nav: 'new',
       employees,
       employeeName: selected?.name ?? '',
       types: this.game.getEventTypes(),
@@ -30,6 +31,6 @@ export class EventsController {
   @Render('rejected')
   async rejected() {
     const rejections = await this.game.getRejections();
-    return { title: 'Отклонённые события', last: rejections[0], rest: rejections.slice(1) };
+    return { title: 'Отклонённые события', nav: 'rejected', last: rejections[0], rest: rejections.slice(1) };
   }
 }

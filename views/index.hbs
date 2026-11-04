@@ -1,10 +1,54 @@
 {{> header}}
-<h1>SalesDrive</h1>
-<p><b>Версия 0.0.3</b></p>
-<p>Система геймификации отдела продаж для Bitrix24: менеджеры получают опыт и уровни за звонки, лиды и сделки в CRM, а руководитель видит рейтинг отдела.</p>
-<div class="actions">
-  <a href="/leaderboard"><b>Рейтинг отдела</b>Сотрудники по набранному опыту, уровни и переход в карточку.</a>
-  <a href="/events/new"><b>Начислить опыт</b>Зарегистрировать событие из CRM: звонок, лид или сделку.</a>
-  <a href="/events/rejected"><b>Отклонённые события</b>Какие события система не приняла и почему.</a>
+<div class="p-4 p-md-5 mb-4 bg-white rounded-3 shadow-sm">
+  <span class="badge text-bg-primary mb-2">Версия 0.0.4</span>
+  <h1 class="display-6 fw-bold">SalesDrive</h1>
+  <p class="lead mb-4">Система геймификации отдела продаж для Bitrix24: менеджеры получают опыт и уровни за звонки, лиды и сделки в CRM, а руководитель видит рейтинг отдела.</p>
+  <a href="/events/new" class="btn btn-primary btn-lg me-2">Начислить опыт</a>
+  <a href="/leaderboard" class="btn btn-outline-primary btn-lg">Открыть рейтинг</a>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-4">
+    <div class="card shadow-sm h-100"><div class="card-body">
+      <div class="text-muted small">Сотрудников в рейтинге</div>
+      <div class="stat-value">{{summary.employees}}</div>
+    </div></div>
+  </div>
+  <div class="col-md-4">
+    <div class="card shadow-sm h-100"><div class="card-body">
+      <div class="text-muted small">Начислений опыта</div>
+      <div class="stat-value text-success">{{summary.events}}</div>
+    </div></div>
+  </div>
+  <div class="col-md-4">
+    <div class="card shadow-sm h-100"><div class="card-body">
+      <div class="text-muted small">Отклонённых событий</div>
+      <div class="stat-value text-danger">{{summary.rejections}}</div>
+    </div></div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-md-4">
+    <div class="card shadow-sm h-100"><div class="card-body d-flex flex-column">
+      <h5 class="card-title">Рейтинг отдела</h5>
+      <p class="card-text text-muted flex-grow-1">Сотрудники по набранному опыту, уровни и переход в карточку.</p>
+      <a href="/leaderboard" class="btn btn-outline-primary">Перейти</a>
+    </div></div>
+  </div>
+  <div class="col-md-4">
+    <div class="card shadow-sm h-100"><div class="card-body d-flex flex-column">
+      <h5 class="card-title">Начислить опыт</h5>
+      <p class="card-text text-muted flex-grow-1">Зарегистрировать событие из CRM: звонок, лид или сделку.</p>
+      <a href="/events/new" class="btn btn-outline-primary">Перейти</a>
+    </div></div>
+  </div>
+  <div class="col-md-4">
+    <div class="card shadow-sm h-100"><div class="card-body d-flex flex-column">
+      <h5 class="card-title">Отклонённые события</h5>
+      <p class="card-text text-muted flex-grow-1">Какие события система не приняла и почему.</p>
+      <a href="/events/rejected" class="btn btn-outline-primary">Перейти</a>
+    </div></div>
+  </div>
 </div>
 {{> footer}}

@@ -9,7 +9,7 @@ export class EmployeesController {
   @Get('leaderboard')
   @Render('leaderboard')
   async leaderboard() {
-    return { title: 'Рейтинг', rows: await this.game.getLeaderboard() };
+    return { title: 'Рейтинг', nav: 'leaderboard', rows: await this.game.getLeaderboard() };
   }
 
   @Get('employees/:id')
@@ -17,6 +17,6 @@ export class EmployeesController {
   async card(@Param('id', ParseIntPipe) id: number) {
     const employee = await this.game.getEmployeeCard(id);
     if (!employee) throw new NotFoundException('Сотрудник не найден');
-    return { title: employee.name, employee };
+    return { title: employee.name, nav: 'leaderboard', employee };
   }
 }
