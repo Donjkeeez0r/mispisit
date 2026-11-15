@@ -1,0 +1,57 @@
+{{> header}}
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+  <h1 class="h3 mb-0">Уведомления</h1>
+  {{#if fresh.length}}
+  <form method="post" action="/notifications/read-all">
+    <button type="submit" class="btn btn-outline-secondary btn-sm">Отметить все прочитанными</button>
+  </form>
+  {{/if}}
+</div>
+
+{{#if fresh.length}}
+<div class="card shadow-sm mb-4">
+  <div class="card-header bg-white d-flex align-items-center gap-2">
+    <h2 class="h5 mb-0">Новые</h2><span class="badge rounded-pill text-bg-danger">{{fresh.length}}</span>
+  </div>
+  <ul class="list-group list-group-flush">
+    {{#each fresh}}
+    <li class="list-group-item d-flex justify-content-between align-items-start flex-wrap gap-2 py-3">
+      <div>
+        <span class="badge text-bg-primary me-1">новое</span>
+        <span class="fw-semibold">{{message}}</span>
+        <div class="small text-muted mt-1">
+          {{date}} · запись начисления <code>{{crmId}}</code> ·
+          <a href="/employees/{{employeeId}}">карточка сотрудника</a>
+        </div>
+      </div>
+      <form method="post" action="/notifications/{{id}}/read">
+        <button type="submit" class="btn btn-sm btn-primary">Прочитано</button>
+      </form>
+    </li>
+    {{/each}}
+  </ul>
+</div>
+{{else}}
+<div class="card shadow-sm mb-4">
+  <div class="empty-state">
+    <h2 class="h5">Новых уведомлений нет</h2>
+    <p class="mb-4">Уведомление появится, когда сотруднику будет начислен опыт за событие из CRM.</p>
+    <a href="/events/new" class="btn btn-primary">Начислить опыт</a>
+  </div>
+</div>
+{{/if}}
+
+{{#if read.length}}
+<div class="card shadow-sm">
+  <div class="card-header bg-white"><h2 class="h5 mb-0">Прочитанные</h2></div>
+  <ul class="list-group list-group-flush">
+    {{#each read}}
+    <li class="list-group-item text-muted py-3">
+      {{message}}
+      <div class="small mt-1">{{date}} · <code>{{crmId}}</code> · прочитано {{readDate}}</div>
+    </li>
+    {{/each}}
+  </ul>
+</div>
+{{/if}}
+{{> footer}}

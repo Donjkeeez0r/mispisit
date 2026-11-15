@@ -8,11 +8,11 @@
 
 ```text
 Репозиторий: https://github.com/Donjkeeez0r/mispisit
-Ветка: lab4
-Pull Request: https://github.com/Donjkeeez0r/mispisit/pull/4
-Образ: donjkeeez0r/mispisit-lab1:0.0.4
+Ветка: lab5
+Pull Request: https://github.com/Donjkeeez0r/mispisit/pull/5
+Образ: donjkeeez0r/mispisit-lab1:0.0.5
 
-git clone -b lab4 https://github.com/Donjkeeez0r/mispisit
+git clone -b lab5 https://github.com/Donjkeeez0r/mispisit
 cd mispisit
 docker compose up -d
 ```
@@ -24,8 +24,9 @@ docker compose up -d
 | Адрес | Что на странице |
 |---|---|
 | http://localhost:8080/ | Главная: версия, сводка, переход к функциям |
-| http://localhost:8080/leaderboard | Рейтинг отдела (после первого запуска пустой) |
+| http://localhost:8080/leaderboard | Рейтинг отдела |
 | http://localhost:8080/events/new | Форма начисления опыта за событие из CRM |
-| http://localhost:8080/events/rejected | Отклонённые события: кто, что и почему не принято |
+| http://localhost:8080/events/rejected | Отклонённые события |
+| http://localhost:8080/notifications | Уведомления о начислении опыта (новые и прочитанные) |
 
 Данные хранятся в PostgreSQL (сервис `db`, том `dbdata`).
