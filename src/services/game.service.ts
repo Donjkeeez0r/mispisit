@@ -5,6 +5,7 @@ import { EVENT_TYPES, EventType, XP_PER_LEVEL } from '../data/game-rules';
 import { Employee } from '../entities/employee.entity';
 import { Rejection } from '../entities/rejection.entity';
 import { XpEvent } from '../entities/xp-event.entity';
+import { Notification } from '../entities/notification.entity';
 
 export interface EventInput {
   employeeName?: string;
@@ -21,6 +22,7 @@ export class GameService {
     @InjectRepository(Employee) private readonly employees: Repository<Employee>,
     @InjectRepository(XpEvent) private readonly events: Repository<XpEvent>,
     @InjectRepository(Rejection) private readonly rejections: Repository<Rejection>,
+    @InjectRepository(Notification) private readonly notifications: Repository<Notification>,
   ) {}
 
   async getSummary() {
@@ -109,8 +111,49 @@ export class GameService {
       employee = await this.employees.save(this.employees.create({ name }));
     }
 
-    await this.events.save(this.events.create({ employee, type, crmId, xp: typeInfo.xp }));
+    // Уровень до начисления, чтобы в уведомлении сообщить о новом уровне
+    const before = calcStats(await this.events.find({ where: { employee: { id: employee.id } } }));
+
+    const event = await this.events.save(this.events.create({ employee, type, crmId, xp: typeInfo.xp }));
+
+    // Уведомление сотруднику о начислении
+    const levelAfter = Math.floor((before.xp + typeInfo.xp) / XP_PER_LEVEL) + 1;
+    let message = `${employee.name}: начислено +${typeInfo.xp} XP за «${typeInfo.label}» (${crmId}).`;
+    if (levelAfter > before.level) message += ` Достигнут уровень ${levelAfter}!`;
+    await this.notifications.save(this.notifications.create({ employee, xpEvent: event, message }));
+
     return { ok: true, employeeId: employee.id };
+  }
+
+  // Уведомления (новые сверху)
+  async getNotifications() {
+    const rows = await this.notifications.find({
+      relations: { employee: true, xpEvent: true },
+      order: { createdAt: 'DESC' },
+    });
+    return rows.map((n) => ({
+      id: n.id,
+      message: n.message,
+      isNew: n.status === 'new',
+      employeeId: n.employee.id,
+      employeeName: n.employee.name,
+      crmId: n.xpEvent.crmId,
+      xp: n.xpEvent.xp,
+      date: formatDate(n.createdAt),
+      readDate: n.readAt ? formatDate(n.readAt) : null,
+    }));
+  }
+
+  countUnread() {
+    return this.notifications.count({ where: { status: 'new' } });
+  }
+
+  async markRead(id: number) {
+    await this.notifications.update({ id, status: 'new' }, { status: 'read', readAt: new Date() });
+  }
+
+  async markAllRead() {
+    await this.notifications.update({ status: 'new' }, { status: 'read', readAt: new Date() });
   }
 
   // Журнал отказов
