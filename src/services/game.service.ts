@@ -11,6 +11,7 @@ export interface EventInput {
   employeeName?: string;
   type?: string;
   crmId?: string;
+  comment?: string;
 }
 
 export type EventResult = { ok: true; employeeId: number } | { ok: false };
@@ -62,6 +63,7 @@ export class GameService {
         date: formatDate(ev.createdAt),
         label: EVENT_TYPES[ev.type]?.label ?? ev.type,
         crmId: ev.crmId,
+        comment: ev.comment,
         xp: ev.xp,
       }));
 
@@ -74,6 +76,7 @@ export class GameService {
     const type = input.type as EventType;
     const typeInfo = EVENT_TYPES[type];
     const crmId = (input.crmId ?? '').trim().toUpperCase();
+    const comment = (input.comment ?? '').trim();
 
     let reason: string | null = null;
     if (!name) {
@@ -86,6 +89,10 @@ export class GameService {
       reason = 'Не указан ID события в CRM. Без него нельзя проверить, что событие не учтено повторно.';
     } else if (crmId.length > 50) {
       reason = 'ID события в CRM длиннее 50 символов.';
+    } else if (crmId.length > 50) {
+      reason = 'ID события в CRM длиннее 50 символов.';
+    } else if (comment.length > 255) {
+      reason = 'Комментарий длиннее 255 символов.';
     } else {
       const duplicate = await this.events.findOne({ where: { crmId }, relations: { employee: true } });
       if (duplicate) {
@@ -114,7 +121,15 @@ export class GameService {
     // Уровень до начисления, чтобы в уведомлении сообщить о новом уровне
     const before = calcStats(await this.events.find({ where: { employee: { id: employee.id } } }));
 
-    const event = await this.events.save(this.events.create({ employee, type, crmId, xp: typeInfo.xp }));
+    const event = await this.events.save(
+      this.events.create({
+        employee,
+        type,
+        crmId,
+        xp: typeInfo.xp,
+        comment: comment || undefined,
+      }),
+    );
 
     // Уведомление сотруднику о начислении
     const levelAfter = Math.floor((before.xp + typeInfo.xp) / XP_PER_LEVEL) + 1;
