@@ -19,22 +19,41 @@
       <div class="d-flex justify-content-between small text-muted mb-1">
         <span>Прогресс уровня</span><span>до следующего уровня {{employee.toNext}} XP</span>
       </div>
-      <div class="progress" role="progressbar" aria-valuenow="{{employee.progress}}" aria-valuemin="0" aria-valuemax="100" style="height: 14px">
+      <div class="progress" role="progressbar" aria-valuenow="{{employee.progress}}" aria-valuemin="0"
+        aria-valuemax="100" style="height: 14px">
         <div class="progress-bar bg-success" style="width: {{employee.progress}}%"></div>
       </div>
     </div>
   </div>
 </div>
 <div class="card shadow-sm">
-  <div class="card-header bg-white"><h2 class="h5 mb-0">История начислений</h2></div>
+  <div class="card-header bg-white">
+    <h2 class="h5 mb-0">История начислений</h2>
+  </div>
   <div class="table-responsive">
     <table class="table align-middle mb-0">
-      <thead class="table-light"><tr><th>Дата</th><th>Событие</th><th>ID в CRM</th><th class="text-end">Опыт</th></tr></thead>
+      <thead class="table-light">
+        <tr>
+          <th>Дата</th>
+          <th>Событие</th>
+          <th>ID в CRM</th>
+          <th>Комментарий</th>
+          <th class="text-end">Опыт</th>
+        </tr>
+      </thead>
       <tbody>
         {{#each employee.history}}
-        <tr><td>{{date}}</td><td>{{label}}</td><td><code>{{crmId}}</code></td><td class="text-end text-success fw-semibold">+{{xp}}</td></tr>
+        <tr>
+          <td>{{date}}</td>
+          <td>{{label}}</td>
+          <td><code>{{crmId}}</code></td>
+          <td>{{comment}}</td>
+          <td class="text-end text-success fw-semibold">+{{xp}}</td>
+        </tr>
         {{else}}
-        <tr><td colspan="4" class="text-center text-muted py-4">Начислений пока нет</td></tr>
+        <tr>
+          <td colspan="5" class="text-center text-muted py-4">Начислений пока нет</td>
+        </tr>
         {{/each}}
       </tbody>
     </table>

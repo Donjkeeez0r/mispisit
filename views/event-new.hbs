@@ -28,6 +28,13 @@
             <input id="crmId" name="crmId" class="form-control" placeholder="например, DEAL-1005">
             <div class="form-text">Уникальный номер звонка, лида или сделки в Bitrix24.</div>
           </div>
+          <div class="mb-3">
+            <label for="comment" class="form-label">Комментарий к начислению</label>
+            <textarea id="comment" name="comment" class="form-control"
+                      rows="2" maxlength="255"
+                      placeholder="Например, клиент согласовал встречу"></textarea>
+            <div class="form-text">Необязательно, до 255 символов.</div>
+          </div>
           <button type="submit" class="btn btn-primary">Начислить</button>
           <a href="/leaderboard" class="btn btn-link">Отмена</a>
         </form>

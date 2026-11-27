@@ -21,6 +21,9 @@ export class XpEvent {
   @Column({ type: 'int' })
   xp!: number;
 
+  @Column({ type: 'varchar', length: 255, default: 'Без комментария' })
+  comment!: string;
+
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt!: Date;
 }
